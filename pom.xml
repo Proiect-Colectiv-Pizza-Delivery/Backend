@@ -55,6 +55,11 @@
 			<version>42.6.0</version> <!-- Use the appropriate version -->
 		</dependency>
 
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
