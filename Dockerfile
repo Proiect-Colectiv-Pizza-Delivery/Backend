@@ -24,7 +24,7 @@ COPY pom.xml .
 COPY src ./src
 
 ENV DB_URL jdbc:postgresql://education.postgres.database.azure.com:5432/pizza
-ENV DB_USER $_DB_USER
+ENV DB_USER postgres
 ENV DB_PASSWORD Education123
 
 
@@ -39,7 +39,7 @@ FROM eclipse-temurin:17.0.8_7-jre-alpine
 COPY --from=builder /app/target/delivery-*.jar /helloworld.jar
 
 ENV DB_URL jdbc:postgresql://education.postgres.database.azure.com:5432/pizza
-ENV DB_USER $_DB_USER
+ENV DB_USER postgres
 ENV DB_PASSWORD Education123
 
 # Run the web service on container startup.
