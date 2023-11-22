@@ -16,10 +16,4 @@ public class PizzaDeliveryApplication
 		SpringApplication.run(PizzaDeliveryApplication.class, args);
 	}
 
-	@Bean
-	public DataSource dataSource() {
-		return DataSourceBuilder.create().username(System.getenv("DB_USER")).password(System.getenv("DB_PASSWORD")).url(System.getenv("DB_URL"))
-				.driverClassName("org.postgresql.Driver").build();
-	}
-
 }

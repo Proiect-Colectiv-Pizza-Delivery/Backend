@@ -9,3 +9,7 @@ DB_USER = postgres
 DB_PASSWORD = {your_password}
 DB_URL = database URL in a format like this : jdbc:postgresql://localhost:5432/pizza
 
+
+How to set environment variables in GCP:
+https://cloud.google.com/run/docs/configuring/services/environment-variables#console
+
