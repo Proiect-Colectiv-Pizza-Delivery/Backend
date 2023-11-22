@@ -23,9 +23,9 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-ENV DB_URL jdbc:postgresql://education.postgres.database.azure.com:5432/pizza
+ENV DB_URL ${_DB_URL}
 ENV DB_USER ${_DB_USER}
-ENV DB_PASSWORD Education123
+ENV DB_PASSWORD ${_DB_PASSWORD}
 
 
 # Build a release artifact.
