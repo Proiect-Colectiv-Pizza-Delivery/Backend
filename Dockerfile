@@ -33,9 +33,9 @@ FROM eclipse-temurin:17.0.8_7-jre-alpine
 # Copy the jar to the production image from the builder stage.
 COPY --from=builder /app/target/delivery-*.jar /helloworld.jar
 
-ENV DB_URL jdbc:postgresql://education.postgres.database.azure.com:5432/pizza
-ENV DB_USER postgres
-ENV DB_PASSWORD Education123
+ENV DB_URL ${DB_URL}
+ENV DB_USER ${DB_USER}
+ENV DB_PASSWORD ${DB_PASSWORD}
 
 # Run the web service on container startup.
 CMD ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/helloworld.jar"]
