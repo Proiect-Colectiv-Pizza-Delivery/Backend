@@ -24,7 +24,7 @@ COPY pom.xml .
 COPY src ./src
 
 ENV DB_URL jdbc:postgresql://education.postgres.database.azure.com:5432/pizza
-ENV DB_USER postgres
+ENV DB_USER ${_DB_USER}
 ENV DB_PASSWORD Education123
 
 
