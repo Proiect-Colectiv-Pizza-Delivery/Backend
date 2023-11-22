@@ -29,7 +29,7 @@ ENV DB_PASSWORD Education123
 
 
 # Build a release artifact.
-RUN mvn package -DskipTests
+RUN mvn package -DskipTests -P cloud
 
 # Use Eclipse Temurin for base image.
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
