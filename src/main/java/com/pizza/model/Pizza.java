@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Entity
-@Table(name = "pizzas")
+@Table(name = "pizzass")
 public class Pizza {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class Pizza {
     private Integer baseQuantity;
 
     @ElementCollection
-    @CollectionTable(name = "pizza_ingredients", joinColumns = @JoinColumn(name = "pizza_id"))
+    @CollectionTable(name = "pizzaa_ingredients", joinColumns = @JoinColumn(name = "pizza_id"))
     @MapKeyColumn(name = "ingredient_id")
     @Column(name = "quantity")
     private Map<Long, Integer> ingredients;
