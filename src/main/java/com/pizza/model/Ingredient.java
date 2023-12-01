@@ -13,10 +13,20 @@ public class Ingredient {
     private String name;
 
     @Column(nullable = false)
-    private float stock; // TODO: Consider changing this to int. What does stock represent? Kilograms? Units?
+    private Integer stock;
 
     @Column(nullable = true)
     private String allergens;
+
+    public Ingredient() {
+
+    }
+
+    public Ingredient(String name, Integer stock, String allergens) {
+        this.name = name;
+        this.stock = stock;
+        this.allergens = allergens;
+    }
 
     public Long getId() {
         return id;
@@ -24,16 +34,6 @@ public class Ingredient {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Ingredient() {
-
-    }
-
-    public Ingredient(String name, float stock, String allergens) {
-        this.name = name;
-        this.stock = stock;
-        this.allergens = allergens;
     }
 
     public String getName() {
@@ -48,7 +48,7 @@ public class Ingredient {
         return stock;
     }
 
-    public void setStock(float stock) {
+    public void setStock(Integer stock) {
         this.stock = stock;
     }
 
