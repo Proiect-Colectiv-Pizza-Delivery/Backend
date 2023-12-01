@@ -3,7 +3,7 @@ package com.pizza.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "ingredientsss")
+@Table(name = "ingredients")
 public class Ingredient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
