@@ -1,4 +1,4 @@
-package com.pizza.config.service;
+package com.pizza.service;
 
 import com.pizza.repository.PizzaRepository;
 import com.pizza.model.Pizza;

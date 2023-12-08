@@ -1,7 +1,7 @@
 package com.pizza.controller;
 
 import com.pizza.model.Ingredient;
-import com.pizza.config.service.IngredientService;
+import com.pizza.service.IngredientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
