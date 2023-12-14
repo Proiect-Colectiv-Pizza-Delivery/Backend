@@ -2,9 +2,6 @@ package com.pizza.model;
 
 import jakarta.persistence.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Entity
 @Table(name = "pizzas")
 public class Pizza {
@@ -33,16 +30,14 @@ public class Pizza {
     @Column(nullable = false)
     private Integer baseQuantity;
 
-    @ElementCollection
-    @CollectionTable(name = "pizza_ingredients", joinColumns = @JoinColumn(name = "pizza_id"))
-    @MapKeyColumn(name = "ingredient_id")
-    @Column(name = "quantity")
-    private Map<Long, Integer> ingredients;
+
+    @Column(name = "ingredients")
+    private String ingredients;
 
     public Pizza() {
     }
 
-    public Pizza(String name, String allergens, float price, String blatType, Integer blatQuantity, String baseName, Integer baseQuantity, Map<Long, Integer> ingredients) {
+    public Pizza(String name, String allergens, float price, String blatType, Integer blatQuantity, String baseName, Integer baseQuantity, String ingredients) {
         this.name = name;
         this.allergens = allergens;
         this.price = price;
@@ -50,7 +45,7 @@ public class Pizza {
         this.blatQuantity = blatQuantity;
         this.baseName = baseName;
         this.baseQuantity = baseQuantity;
-        this.ingredients = (ingredients != null) ? ingredients : new HashMap<>();
+        this.ingredients = ingredients;
     }
 
     public Long getId() {
@@ -117,11 +112,11 @@ public class Pizza {
         this.baseQuantity = baseQuantity;
     }
 
-    public Map<Long, Integer> getIngredients() {
+    public String getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(Map<Long, Integer> ingredients) {
+    public void setIngredients(String ingredients) {
         this.ingredients = ingredients;
     }
 

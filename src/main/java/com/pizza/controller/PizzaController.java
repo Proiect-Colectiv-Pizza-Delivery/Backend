@@ -2,14 +2,18 @@ package com.pizza.controller;
 
 import com.pizza.model.Pizza;
 import com.pizza.service.PizzaService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/pizzas")
+@SecurityRequirement(name = "bearerAuth")
+@PreAuthorize("hasRole('ROLE_USER')")
 public class PizzaController {
 
     private final PizzaService pizzaService;
@@ -20,8 +24,13 @@ public class PizzaController {
     }
 
     @GetMapping
-    public List<Pizza> getAllPizzas() {
-        return pizzaService.getAllPizzas();
+    public ResponseEntity<List<Pizza>> getAllPizzas() {
+        try {
+            return ResponseEntity.ok(pizzaService.getAllPizzas());
+        }catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+
     }
 
     @GetMapping("/{id}")
@@ -48,11 +57,11 @@ public class PizzaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePizza(@PathVariable Long id) {
+    public ResponseEntity<String> deletePizza(@PathVariable Long id) {
         if (pizzaService.getPizzaById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         pizzaService.deletePizza(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Delete successfully id = " + id);
     }
 }

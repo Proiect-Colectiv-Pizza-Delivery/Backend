@@ -2,14 +2,18 @@ package com.pizza.controller;
 
 import com.pizza.model.Ingredient;
 import com.pizza.service.IngredientService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/ingredients")
+@SecurityRequirement(name = "bearerAuth")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class IngredientController {
 
     private final IngredientService ingredientService;

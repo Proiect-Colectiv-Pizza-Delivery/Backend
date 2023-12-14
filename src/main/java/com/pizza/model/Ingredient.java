@@ -1,7 +1,13 @@
 package com.pizza.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "ingredients")
 public class Ingredient {
@@ -18,55 +24,4 @@ public class Ingredient {
     @Column(nullable = true)
     private String allergens;
 
-    public Ingredient() {
-
-    }
-
-    public Ingredient(String name, Integer stock, String allergens) {
-        this.name = name;
-        this.stock = stock;
-        this.allergens = allergens;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public float getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
-
-    public String getAllergens() {
-        return allergens;
-    }
-
-    public void setAllergens(String allergens) {
-        this.allergens = allergens;
-    }
-
-    @Override
-    public String toString() {
-        return "Ingredient{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", stock=" + stock +
-                ", allergens=" +
-                '}';
-    }
 }
