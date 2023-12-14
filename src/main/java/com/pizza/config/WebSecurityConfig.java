@@ -43,8 +43,7 @@ public class WebSecurityConfig {
             "/webjars/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
-            "/api/auth/**",
-            "/api/test/**"
+            "/api/auth/**"
     };
 
     @Bean
@@ -81,8 +80,8 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(AUTH_WHITELIST).permitAll()
-//                                .requestMatchers("/pizzas/**").hasRole("USER")
-//                                .requestMatchers("/ingredients/**").hasRole("ADMIN")
+                                .requestMatchers("/api/pizzas/**").hasRole("USER")
+                                .requestMatchers("/api/ingredients/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 );
 

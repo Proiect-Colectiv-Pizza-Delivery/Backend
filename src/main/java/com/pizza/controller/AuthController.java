@@ -8,7 +8,6 @@ import com.pizza.security.payload.request.LoginRequest;
 import com.pizza.security.payload.request.SignupRequest;
 import com.pizza.security.payload.response.JwtResponse;
 import com.pizza.security.payload.response.TokenRefreshResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
-@SecurityRequirement(name = "bearerAuth")
 public class AuthController {
     UserDetailsManagerImpl userDetailsManager;
     RefreshTokenService refreshTokenService;
