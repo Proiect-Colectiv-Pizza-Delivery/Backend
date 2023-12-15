@@ -2,6 +2,8 @@ package com.pizza.controller;
 
 import com.pizza.model.Pizza;
 import com.pizza.service.PizzaService;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pizzas")
+@OpenAPIDefinition(
+        security = {@SecurityRequirement(name = "bearerAuth")}
+)
 public class PizzaController {
 
     private final PizzaService pizzaService;
