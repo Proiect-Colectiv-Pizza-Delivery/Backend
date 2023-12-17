@@ -1,7 +1,12 @@
 package com.pizza.model;
 
+import com.pizza.model.dto.IngredientDto;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "ingredients")
 public class Ingredient {
@@ -28,36 +33,14 @@ public class Ingredient {
         this.allergens = allergens;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public static Ingredient from(IngredientDto ingredientDto) {
+        Ingredient ingredient = new Ingredient();
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+        ingredient.setName(ingredientDto.getName());
+        ingredient.setStock(ingredientDto.getStock());
+        ingredient.setAllergens(ingredientDto.getAllergens());
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public float getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
-
-    public String getAllergens() {
-        return allergens;
-    }
-
-    public void setAllergens(String allergens) {
-        this.allergens = allergens;
+        return ingredient;
     }
 
     @Override
