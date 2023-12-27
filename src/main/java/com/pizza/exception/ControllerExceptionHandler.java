@@ -27,11 +27,11 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(CustomException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleValidationExceptions(CustomException e) {
-
-        return ResponseEntity.badRequest().body(e.getMessage());
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleCustomExceptions(CustomException e) {
+        return ResponseEntity.status(404).body(e.getMessage());
     }
+
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e) {
