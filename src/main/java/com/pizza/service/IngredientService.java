@@ -1,12 +1,15 @@
 package com.pizza.service;
 
-import com.pizza.repository.IngredientRepository;
 import com.pizza.model.Ingredient;
+import com.pizza.model.dto.IngredientDto;
+import com.pizza.repository.IngredientRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class IngredientService {
@@ -18,19 +21,36 @@ public class IngredientService {
         this.ingredientRepository = ingredientRepository;
     }
 
-    public List<Ingredient> getAllIngredients() {
-        return ingredientRepository.findAll();
+    public List<IngredientDto> getAllIngredients() {
+        return ingredientRepository.findAll().stream().map(IngredientDto::from).collect(Collectors.toList());
     }
 
-    public Optional<Ingredient> getIngredientById(Long id) {
-        return ingredientRepository.findById(id);
+    public Optional<IngredientDto> getIngredientById(Long id) {
+        return ingredientRepository.findById(id).map(IngredientDto::from);
     }
 
-    public Ingredient saveIngredient(Ingredient ingredient) {
-        return ingredientRepository.save(ingredient);
+    public IngredientDto saveIngredient(IngredientDto ingredientDto) {
+        return IngredientDto.from(ingredientRepository.save(Ingredient.from(ingredientDto)));
     }
 
-    public void deleteIngredient(Long id) {
-        ingredientRepository.deleteById(id);
+    public boolean deleteIngredientById(Long id) {
+        return ingredientRepository.findById(id)
+                .map(ingredient -> {
+                    ingredientRepository.delete(ingredient);
+                    return true;
+                }).orElse(false);
     }
+
+    @Transactional
+    public Optional<IngredientDto> updateIngredient(Long id, IngredientDto newIngredientDto) {
+        return ingredientRepository.findById(id)
+                .map(ingredientToUpdate -> {
+                    ingredientToUpdate.setName(newIngredientDto.getName());
+                    ingredientToUpdate.setStock(newIngredientDto.getStock());
+                    ingredientToUpdate.setAllergens(newIngredientDto.getAllergens());
+
+                    return IngredientDto.from(ingredientToUpdate);
+                });
+    }
+
 }

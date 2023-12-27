@@ -1,10 +1,17 @@
 package com.pizza.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.pizza.model.dto.PizzaDto;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "pizzas")
 public class Pizza {
@@ -33,11 +40,9 @@ public class Pizza {
     @Column(nullable = false)
     private Integer baseQuantity;
 
-    @ElementCollection
-    @CollectionTable(name = "pizza_ingredients", joinColumns = @JoinColumn(name = "pizza_id"))
-    @MapKeyColumn(name = "ingredient_id")
-    @Column(name = "quantity")
-    private Map<Long, Integer> ingredients;
+    @OneToMany(mappedBy = "pizza", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<PizzaIngredient> pizzaIngredientSet;
 
     public Pizza() {
     }
@@ -50,79 +55,20 @@ public class Pizza {
         this.blatQuantity = blatQuantity;
         this.baseName = baseName;
         this.baseQuantity = baseQuantity;
-        this.ingredients = (ingredients != null) ? ingredients : new HashMap<>();
     }
 
-    public Long getId() {
-        return id;
-    }
+    public static Pizza from(PizzaDto pizzaDto){
+        Pizza pizza=new Pizza();
+        pizza.setName(pizzaDto.getName());
+        pizza.setAllergens(pizzaDto.getAllergens());
+        pizza.setPrice(pizzaDto.getPrice());
+        pizza.setBlatType(pizzaDto.getBlatType());
+        pizza.setBlatQuantity(pizzaDto.getBlatQuantity());
+        pizza.setBaseName(pizzaDto.getBaseName());
+        pizza.setBaseQuantity(pizzaDto.getBaseQuantity());
+        pizza.setPizzaIngredientSet(new HashSet<>());
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAllergens() {
-        return allergens;
-    }
-
-    public void setAllergens(String allergens) {
-        this.allergens = allergens;
-    }
-
-    public float getPrice() {
-        return price;
-    }
-
-    public void setPrice(float price) {
-        this.price = price;
-    }
-
-    public String getBlatType() {
-        return blatType;
-    }
-
-    public void setBlatType(String blatType) {
-        this.blatType = blatType;
-    }
-
-    public Integer getBlatQuantity() {
-        return blatQuantity;
-    }
-
-    public void setBlatQuantity(Integer blatQuantity) {
-        this.blatQuantity = blatQuantity;
-    }
-
-    public String getBaseName() {
-        return baseName;
-    }
-
-    public void setBaseName(String baseName) {
-        this.baseName = baseName;
-    }
-
-    public Integer getBaseQuantity() {
-        return baseQuantity;
-    }
-
-    public void setBaseQuantity(Integer baseQuantity) {
-        this.baseQuantity = baseQuantity;
-    }
-
-    public Map<Long, Integer> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(Map<Long, Integer> ingredients) {
-        this.ingredients = ingredients;
+        return pizza;
     }
 
     @Override
@@ -130,13 +76,13 @@ public class Pizza {
         return "Pizza{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", price=" + price +
                 ", allergens='" + allergens + '\'' +
-                ", baseName='" + baseName + '\'' +
-                ", baseQuantity=" + baseQuantity +
+                ", price=" + price +
                 ", blatType='" + blatType + '\'' +
                 ", blatQuantity=" + blatQuantity +
-                ", ingredients=" + ingredients +
+                ", baseName='" + baseName + '\'' +
+                ", baseQuantity=" + baseQuantity +
+                ", pizzaIngredientSet=" + pizzaIngredientSet +
                 '}';
     }
 }

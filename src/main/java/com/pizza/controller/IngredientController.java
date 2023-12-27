@@ -1,13 +1,16 @@
 package com.pizza.controller;
 
-import com.pizza.model.Ingredient;
+import com.pizza.model.dto.IngredientDto;
 import com.pizza.service.IngredientService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/ingredients")
 public class IngredientController {
@@ -20,39 +23,39 @@ public class IngredientController {
     }
 
     @GetMapping
-    public List<Ingredient> getAllIngredients() {
+    public List<IngredientDto> getAllIngredients() {
         return ingredientService.getAllIngredients();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ingredient> getIngredientById(@PathVariable Long id) {
+    public ResponseEntity<IngredientDto> getIngredientById(@PathVariable(value = "id") Long id) throws Exception {
         return ingredientService.getIngredientById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<Ingredient> createIngredient(@RequestBody Ingredient ingredient) {
-        Ingredient savedIngredient = ingredientService.saveIngredient(ingredient);
-        return ResponseEntity.ok(savedIngredient);
+    @PostMapping()
+    public ResponseEntity<IngredientDto> createIngredient(@RequestBody @Valid final IngredientDto ingredientDtoRequest) {
+        IngredientDto ingredientDtoResponse = ingredientService.saveIngredient(ingredientDtoRequest);
+        return ResponseEntity.ok(ingredientDtoResponse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Ingredient> updateIngredient(@PathVariable Long id, @RequestBody Ingredient ingredient) {
-        if (ingredientService.getIngredientById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        ingredient.setId(id);
-        Ingredient updatedIngredient = ingredientService.saveIngredient(ingredient);
-        return ResponseEntity.ok(updatedIngredient);
+    public ResponseEntity<IngredientDto> updateIngredient(@PathVariable(value = "id") Long id, @RequestBody @Valid IngredientDto newIngredientDto) {
+        return ingredientService.updateIngredient(id, newIngredientDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteIngredient(@PathVariable Long id) {
-        if (ingredientService.getIngredientById(id).isEmpty()) {
+    public ResponseEntity<Void> deleteIngredient(@PathVariable(value = "id") Long id) {
+
+        boolean deleted = ingredientService.deleteIngredientById(id);
+        if (deleted) {
+            return ResponseEntity.ok().build();
+        } else {
             return ResponseEntity.notFound().build();
         }
-        ingredientService.deleteIngredient(id);
-        return ResponseEntity.noContent().build();
+
     }
 }

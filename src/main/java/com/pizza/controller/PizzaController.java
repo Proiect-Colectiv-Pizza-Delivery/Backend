@@ -1,7 +1,12 @@
 package com.pizza.controller;
 
-import com.pizza.model.Pizza;
+import com.pizza.model.dto.PizzaDto;
+import com.pizza.model.dto.PizzaDtoWithIngredients;
+import com.pizza.model.dto.PizzaIngredientList;
+import com.pizza.model.dto.PizzaIngredientWithQuantityList;
+import com.pizza.service.PizzaIngredientService;
 import com.pizza.service.PizzaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,45 +19,73 @@ public class PizzaController {
 
     private final PizzaService pizzaService;
 
+    private final PizzaIngredientService pizzaIngredientService;
+
     @Autowired
-    public PizzaController(PizzaService pizzaService) {
+    public PizzaController(PizzaService pizzaService, PizzaIngredientService pizzaIngredientService) {
         this.pizzaService = pizzaService;
+        this.pizzaIngredientService = pizzaIngredientService;
     }
 
-    @GetMapping
-    public List<Pizza> getAllPizzas() {
+    @GetMapping()
+    public List<PizzaDto> getAllPizzas() {
         return pizzaService.getAllPizzas();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Pizza> getPizzaById(@PathVariable Long id) {
-        return pizzaService.getPizzaById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/ingredients")
+    public List<PizzaDtoWithIngredients> getAllPizzasWithIngredients() {
+        return pizzaService.getAllPizzasWithIngredients();
     }
 
-    @PostMapping
-    public ResponseEntity<Pizza> createPizza(@RequestBody Pizza pizza) {
-        Pizza savedPizza = pizzaService.savePizza(pizza);
-        return ResponseEntity.ok(savedPizza);
+    @GetMapping("/{id}")
+    public ResponseEntity<PizzaDto> getPizzaById(@PathVariable(value = "id") Long id) throws Exception {
+        return pizzaService.getPizzaById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("{id}/ingredients")
+    public ResponseEntity<PizzaDtoWithIngredients> getPizzaWithIngredientsById(@PathVariable(value = "id") Long id) throws Exception {
+        return pizzaService.getPizzaWithIngredientsById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping()
+    public ResponseEntity<PizzaDto> createPizza(@RequestBody @Valid final PizzaDto pizzaDtoRequest) {
+        PizzaDto pizzaDtoResponse = pizzaService.savePizza(pizzaDtoRequest);
+        return ResponseEntity.ok(pizzaDtoResponse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pizza> updatePizza(@PathVariable Long id, @RequestBody Pizza pizza) {
-        if (pizzaService.getPizzaById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        pizza.setId(id);
-        Pizza updatedPizza = pizzaService.savePizza(pizza);
-        return ResponseEntity.ok(updatedPizza);
+    public ResponseEntity<PizzaDto> updatePizza(@PathVariable(value = "id") Long id, @RequestBody @Valid PizzaDto newPizzaDto) {
+        return pizzaService.updatePizza(id, newPizzaDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePizza(@PathVariable Long id) {
-        if (pizzaService.getPizzaById(id).isEmpty()) {
+    public ResponseEntity<Void> deletePizza(@PathVariable(value = "id") Long id) {
+        boolean deleted = pizzaService.deletePizzaById(id);
+        if (deleted) {
+            return ResponseEntity.ok().build();
+        } else {
             return ResponseEntity.notFound().build();
         }
-        pizzaService.deletePizza(id);
+    }
+
+    @PostMapping("/updateIngredients")
+    public ResponseEntity<PizzaIngredientWithQuantityList> updatePizzaIngredients(
+            @RequestBody @Valid PizzaIngredientWithQuantityList pizzaIngredientWithQuantityList) {
+        PizzaIngredientWithQuantityList returnedPizzaIngredientsList = pizzaIngredientService.updatePizzaIngredients(pizzaIngredientWithQuantityList);
+        return ResponseEntity.ok(returnedPizzaIngredientsList);
+    }
+
+    @DeleteMapping("/removeIngredients")
+    public ResponseEntity<Void> removeIngredientsFromPizza(
+            @RequestBody PizzaIngredientList pizzaIngredientList) {
+        pizzaIngredientService.removePizzaIngredients(pizzaIngredientList);
         return ResponseEntity.noContent().build();
     }
+
 }
