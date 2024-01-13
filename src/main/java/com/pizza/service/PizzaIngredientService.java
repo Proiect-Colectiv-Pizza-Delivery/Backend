@@ -5,10 +5,7 @@ import com.pizza.model.Ingredient;
 import com.pizza.model.Pizza;
 import com.pizza.model.PizzaIngredient;
 import com.pizza.model.PizzaIngredientKey;
-import com.pizza.model.dto.IngredientWithQuantity;
-import com.pizza.model.dto.PizzaIngredientDto;
-import com.pizza.model.dto.PizzaIngredientList;
-import com.pizza.model.dto.PizzaIngredientWithQuantityList;
+import com.pizza.model.dto.*;
 import com.pizza.repository.IngredientRepository;
 import com.pizza.repository.PizzaIngredientRepository;
 import com.pizza.repository.PizzaRepository;
@@ -36,19 +33,19 @@ public class PizzaIngredientService {
     }
 
     @Transactional(rollbackOn = CustomException.class)
-    public PizzaIngredientWithQuantityList updatePizzaIngredients(PizzaIngredientWithQuantityList pizzaIngredientWithQuantityList) throws CustomException {
-        Long pizzaId = pizzaIngredientWithQuantityList.getPizzaId();
-        List<IngredientWithQuantity> ingredientList = pizzaIngredientWithQuantityList.getIngredientsList();
+    public PizzaIngredientIdsWithQuantityList updatePizzaIngredients(PizzaIngredientIdsWithQuantityList pizzaIngredientIdsWithQuantityList) throws CustomException {
+        Long pizzaId = pizzaIngredientIdsWithQuantityList.getPizzaId();
+        List<IngredientIdWithQuantity> ingredientList = pizzaIngredientIdsWithQuantityList.getIngredientsIdList();
 
-        for (IngredientWithQuantity ingredient : ingredientList) {
+        for (IngredientIdWithQuantity ingredient : ingredientList) {
             updateIngredientInPizza(ingredient.getQuantity(), pizzaId, ingredient.getIngredientId());
         }
 
         Pizza updatedPizzaWithIngredients = pizzaRepository.findById(pizzaId).orElseThrow(() -> new CustomException("Pizza with id " + pizzaId + " not found"));
 
-        PizzaIngredientWithQuantityList response = new PizzaIngredientWithQuantityList();
+        PizzaIngredientIdsWithQuantityList response = new PizzaIngredientIdsWithQuantityList();
         response.setPizzaId(pizzaId);
-        response.setIngredientsList(updatedPizzaWithIngredients.getPizzaIngredientSet().stream().map(IngredientWithQuantity::from).collect(Collectors.toList()));
+        response.setIngredientsIdList(updatedPizzaWithIngredients.getPizzaIngredientSet().stream().map(IngredientIdWithQuantity::from).collect(Collectors.toList()));
 
         return response;
 
