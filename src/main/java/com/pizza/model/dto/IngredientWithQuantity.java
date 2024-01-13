@@ -11,15 +11,15 @@ import lombok.Data;
 public class IngredientWithQuantity {
 
     @NotNull
-    @Schema(description = "Ingredient id", example = "1")
-    private Long ingredientId;
+    @Schema(description = "Ingredient", example = "{'id': 1, 'name': 'Peanut Butter', 'stock': 100, 'allergens': 'Nuts'}")
+    private IngredientDto ingredient;
 
     @NotNull
     @Schema(description = "Quantity of the ingredient", example = "2")
     private Integer quantity;
 
     public static IngredientWithQuantity from(PizzaIngredient pizzaIngredient) {
-        return new IngredientWithQuantity(pizzaIngredient.getId().getIngredientId(), pizzaIngredient.getQuantity());
+        return new IngredientWithQuantity(IngredientDto.from(pizzaIngredient.getIngredient()), pizzaIngredient.getQuantity());
     }
 
 }

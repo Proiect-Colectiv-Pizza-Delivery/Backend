@@ -14,6 +14,6 @@ public class PizzaIngredientWithQuantityList {
     private Long pizzaId;
 
     @NotNull
-    @Schema(description = "List of ingredients with their quantities", example = "[{'ingredientId': 1, 'quantity': 2}]")
+    @Schema(description = "List of ingredients with their quantities", example = "[{'ingredient': {'id': 1, 'name': 'Peanut Butter', 'stock': 100, 'allergens': 'Nuts'}, 'quantity': 2}]")
     private List<IngredientWithQuantity> ingredientsList;
 }

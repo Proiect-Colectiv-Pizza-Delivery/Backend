@@ -1,10 +1,7 @@
 package com.pizza.controller;
 
 import com.pizza.exception.CustomException;
-import com.pizza.model.dto.PizzaDto;
-import com.pizza.model.dto.PizzaDtoWithIngredients;
-import com.pizza.model.dto.PizzaIngredientList;
-import com.pizza.model.dto.PizzaIngredientWithQuantityList;
+import com.pizza.model.dto.*;
 import com.pizza.service.PizzaIngredientService;
 import com.pizza.service.PizzaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,7 +43,7 @@ public class PizzaController {
     @Operation(summary = "Retrieve all pizzas with their ingredients")
     @ApiResponse(responseCode = "200", description = "List of all pizzas with ingredients",
             content = @Content(mediaType = "application/json",
-                    examples = @ExampleObject(value = "[{'id': 2, 'name': 'Hawaiian', 'allergens': 'Pineapple, Ham', 'price': 11.99, 'blatType': 'Thick', 'blatQuantity': 2, 'baseName': 'Cheese', 'baseQuantity': 2, 'ingredients': [{'ingredientId': 1, 'quantity': 2}]}]")))
+                    examples = @ExampleObject(value = "[{'id': 2, 'name': 'Hawaiian', 'allergens': 'Pineapple, Ham', 'price': 11.99, 'blatType': 'Thick', 'blatQuantity': 2, 'baseName': 'Cheese', 'baseQuantity': 2, 'ingredients': [{'id': 1, 'name': 'Peanut Butter', 'stock': 100, 'allergens': 'Nuts'}, {'id': 2, 'name': 'Cheese', 'stock': 50, 'allergens': 'Dairy'}]}]")))
     public List<PizzaDtoWithIngredients> getAllPizzasWithIngredients() {
         return pizzaService.getAllPizzasWithIngredients();
     }
@@ -127,13 +124,13 @@ public class PizzaController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pizza ingredients updated",
                     content = @Content(mediaType = "application/json",
-                            examples = @ExampleObject(value = "{'pizzaId': 1, 'ingredientsList': [{'ingredientId': 3, 'quantity': 2}]}"))),
+                            examples = @ExampleObject(value = "{'pizzaId': 1, 'ingredientsIdList': [{'ingredientId': 3, 'quantity': 2}]}"))),
             @ApiResponse(responseCode = "404", description = "Pizza or ingredient not found"),
             @ApiResponse(responseCode = "400", description = "Validation errors")
     })
-    public ResponseEntity<PizzaIngredientWithQuantityList> updatePizzaIngredients(
-            @RequestBody @Valid PizzaIngredientWithQuantityList pizzaIngredientWithQuantityList) throws CustomException {
-        PizzaIngredientWithQuantityList returnedPizzaIngredientsList = pizzaIngredientService.updatePizzaIngredients(pizzaIngredientWithQuantityList);
+    public ResponseEntity<PizzaIngredientIdsWithQuantityList> updatePizzaIngredients(
+            @RequestBody @Valid PizzaIngredientIdsWithQuantityList pizzaIngredientIdsWithQuantityList) throws CustomException {
+        PizzaIngredientIdsWithQuantityList returnedPizzaIngredientsList = pizzaIngredientService.updatePizzaIngredients(pizzaIngredientIdsWithQuantityList);
         return ResponseEntity.ok(returnedPizzaIngredientsList);
     }
 
