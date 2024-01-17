@@ -1,6 +1,7 @@
 package com.pizza.security;
 
 
+import com.pizza.exception.CustomException;
 import com.pizza.model.security.requests.LoginRequest;
 import com.pizza.model.security.requests.SignupRequest;
 import com.pizza.model.security.responses.JwtResponse;
@@ -110,13 +111,20 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
 
     }
 
-    public void registerUser(SignupRequest signUpRequest, String deviceId) {
+    public void registerUser(SignupRequest signUpRequest, String deviceId) throws CustomException {
         if (userRepo.existsByUsername(signUpRequest.getUsername())) {
-            log.error("Error: Username is already in use!");
+            String error="Username already in use";
+            log.error(error);
+            throw new CustomException(error);
+        }
+        if (userRepo.existsByPhoneNumber(signUpRequest.getPhoneNumber())) {
+            String error="Phone number already in use";
+            log.error(error);
+            throw new CustomException(error);
         }
         Set<Role> roles = new HashSet<>();
         Role roleStart = roleRepo.findByName(ERole.valueOf(signUpRequest.getRole()))
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                .orElseThrow(() -> new CustomException("Error: Role is not found."));
         roles.add(roleStart);
 
         List<GrantedAuthority> authorities = roles.stream()
@@ -131,7 +139,7 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
 
         String username = signUpRequest.getUsername();
         User user = userRepo.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+                .orElseThrow(() -> new CustomException("User Not Found with username: " + username));
 
         user.setEmail(signUpRequest.getEmail());
         user.setFirstName(signUpRequest.getFirstName());

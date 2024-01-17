@@ -1,5 +1,6 @@
 package com.pizza.controller.security;
 
+import com.pizza.exception.CustomException;
 import com.pizza.exception.security.TokenRefreshException;
 import com.pizza.model.security.requests.LoginRequest;
 import com.pizza.model.security.requests.SignupRequest;
@@ -37,12 +38,8 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody SignupRequest signUpRequest,@RequestHeader(name="Device-id") String deviceId) {
-        try {
-            userDetailsManager.registerUser(signUpRequest, deviceId);
-        } catch (RuntimeException exception) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<String> registerUser(@Valid @RequestBody SignupRequest signUpRequest,@RequestHeader(name="Device-id") String deviceId) throws CustomException {
+        userDetailsManager.registerUser(signUpRequest, deviceId);
         return ResponseEntity.ok("User " + signUpRequest.getUsername() + " registered successfully!");
     }
 
