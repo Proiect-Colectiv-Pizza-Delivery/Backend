@@ -2,11 +2,13 @@ package com.pizza.controller;
 
 import com.pizza.model.dto.IngredientDto;
 import com.pizza.service.IngredientService;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,9 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("/api/ingredients")
+@OpenAPIDefinition(
+        security = {@SecurityRequirement(name = "bearerAuth")}
+)
 public class IngredientController {
 
     private final IngredientService ingredientService;

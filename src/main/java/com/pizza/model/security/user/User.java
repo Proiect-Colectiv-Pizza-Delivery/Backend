@@ -32,6 +32,10 @@ public class User {
     @Size(max = 120)
     private String password;
 
+    @NotBlank
+    @Column(name = "fingerprint")
+    private String deviceId;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "username"),
@@ -47,10 +51,11 @@ public class User {
     @Size(max = 20)
     private String phoneNumber;
 
-    public User(String username, String password, Set<Role> roles) {
+    public User(String username, String password, Set<Role> roles, String deviceId) {
         this.username = username;
         this.password = password;
         this.roles = roles;
+        this.deviceId=deviceId;
     }
 
     public User(String email, String firstName, String lastName, String phoneNumber) {
