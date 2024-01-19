@@ -8,6 +8,7 @@ import com.pizza.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,6 +61,11 @@ public class TokenService {
                 .tokenId(accessTokenId)
                 .expiryDate(expiryDate)
                 .build();
+    }
+
+    @Scheduled(cron = "0 0 0 */2 * *") // aprox midnight, every 2 days
+    public void cleanExpiredTokens() {
+        invalidatedTokenRepository.deleteExpiredTokens();
     }
 
 }

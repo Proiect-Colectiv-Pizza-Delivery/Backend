@@ -54,6 +54,17 @@ public class UserDetailsImpl implements UserDetails{
 
     }
 
+    public UserDetailsImpl(User user, Collection<? extends GrantedAuthority> authorities) {
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.email = user.getEmail();
+        this.phoneNumber = user.getPhoneNumber();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.authorities = authorities;
+
+    }
+
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))

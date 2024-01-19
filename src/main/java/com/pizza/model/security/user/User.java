@@ -28,7 +28,7 @@ public class User {
     @Email
     private String email;
 
-    @NotBlank
+    //@NotBlank
     @Size(max = 120)
     private String password;
 
@@ -48,14 +48,14 @@ public class User {
     @Size(max = 30)
     private String lastName;
 
-    @Size(max = 20)
+    @Size(max = 40)
     private String phoneNumber;
 
     public User(String username, String password, Set<Role> roles, String deviceId) {
         this.username = username;
         this.password = password;
         this.roles = roles;
-        this.deviceId=deviceId;
+        this.deviceId = deviceId;
     }
 
     public User(String email, String firstName, String lastName, String phoneNumber) {
