@@ -122,6 +122,11 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
             log.error(error);
             throw new CustomException(error);
         }
+        if (userRepo.existsByEmail(signUpRequest.getEmail())) {
+            String error="Email already in use";
+            log.error(error);
+            throw new CustomException(error);
+        }
         Set<Role> roles = new HashSet<>();
         Role roleStart = roleRepo.findByName(ERole.valueOf(signUpRequest.getRole()))
                 .orElseThrow(() -> new CustomException("Error: Role is not found."));
