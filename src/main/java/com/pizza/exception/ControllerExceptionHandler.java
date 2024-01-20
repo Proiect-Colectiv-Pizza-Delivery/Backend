@@ -39,7 +39,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(AlreadyInUseException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleAlreadyInUseException(AlreadyInUseException e) {
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(400).body(e.getMessage());
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)

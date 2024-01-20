@@ -41,6 +41,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        if(request.getServletPath().contains("/swagger") || request.getServletPath().contains("/v3/api-docs")){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String deviceHeader = parseDeviceId(request);
         if (deviceHeader == null) {
             handleMissingDeviceId(response);
@@ -135,7 +140,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("error", "Missing Device ID");
 
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(mapper.writeValueAsString(errorDetails));
 
@@ -147,7 +152,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("error", "Missing jwt");
 
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(mapper.writeValueAsString(errorDetails));
 

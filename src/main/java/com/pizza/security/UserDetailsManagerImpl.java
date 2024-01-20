@@ -1,6 +1,7 @@
 package com.pizza.security;
 
 
+import com.pizza.exception.AlreadyInUseException;
 import com.pizza.exception.CustomException;
 import com.pizza.model.security.requests.LoginRequest;
 import com.pizza.model.security.requests.SignupRequest;
@@ -111,21 +112,21 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
 
     }
 
-    public void registerUser(SignupRequest signUpRequest, String deviceId) throws CustomException {
+    public void registerUser(SignupRequest signUpRequest, String deviceId) throws CustomException,AlreadyInUseException {
         if (userRepo.existsByUsername(signUpRequest.getUsername())) {
             String error="Username already in use";
             log.error(error);
-            throw new CustomException(error);
+            throw new AlreadyInUseException(error);
         }
         if (userRepo.existsByPhoneNumber(signUpRequest.getPhoneNumber())) {
             String error="Phone number already in use";
             log.error(error);
-            throw new CustomException(error);
+            throw new AlreadyInUseException(error);
         }
         if (userRepo.existsByEmail(signUpRequest.getEmail())) {
             String error="Email already in use";
             log.error(error);
-            throw new CustomException(error);
+            throw new AlreadyInUseException(error);
         }
         Set<Role> roles = new HashSet<>();
         Role roleStart = roleRepo.findByName(ERole.valueOf(signUpRequest.getRole()))

@@ -1,5 +1,6 @@
 package com.pizza.controller.security;
 
+import com.pizza.exception.AlreadyInUseException;
 import com.pizza.exception.CustomException;
 import com.pizza.exception.security.TokenRefreshException;
 import com.pizza.model.security.requests.LoginRequest;
@@ -38,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody SignupRequest signUpRequest,@RequestHeader(name="Device-id") String deviceId) throws CustomException {
+    public ResponseEntity<String> registerUser(@Valid @RequestBody SignupRequest signUpRequest,@RequestHeader(name="Device-id") String deviceId) throws CustomException, AlreadyInUseException {
         userDetailsManager.registerUser(signUpRequest, deviceId);
         return ResponseEntity.ok("User " + signUpRequest.getUsername() + " registered successfully!");
     }
