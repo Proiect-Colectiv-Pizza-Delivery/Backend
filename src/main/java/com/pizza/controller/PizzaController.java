@@ -4,11 +4,13 @@ import com.pizza.exception.CustomException;
 import com.pizza.model.dto.*;
 import com.pizza.service.PizzaIngredientService;
 import com.pizza.service.PizzaService;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/pizzas")
+@OpenAPIDefinition(
+        security = {@SecurityRequirement(name = "bearerAuth")}
+)
 public class PizzaController {
 
     private final PizzaService pizzaService;
