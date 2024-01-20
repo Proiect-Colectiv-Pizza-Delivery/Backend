@@ -38,13 +38,16 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     private AuthEntryPointJwt unauthorizedHandler;
 
     private static final String[] AUTH_WHITELIST = {
+            "/v2/**",
             "/v2/api-docs",
-            "/swagger-resources",
+            "/v2/api-docs/**",
             "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
+            "/configuration/**",
             "/swagger-ui.html",
+            "/swagger-ui.html/**",
             "/webjars/**",
+            "/v3/**",
+            "/v3/api-docs",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/api/auth/**"
@@ -78,16 +81,16 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable).cors(cors -> {
-                })
+        http.csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(AUTH_WHITELIST).permitAll()
-                                .requestMatchers(AUTH_WHITELIST).permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/pizzas", "/api/pizzas/*", "/api/pizzas/*/ingredients", "/api/pizzas/ingredients").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers("/api/pizzas/**", "/api/ingredients/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> {
+                            auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                            auth.requestMatchers(AUTH_WHITELIST).permitAll()
+                                    .requestMatchers(HttpMethod.GET, "/api/pizzas", "/api/pizzas/*", "/api/pizzas/*/ingredients", "/api/pizzas/ingredients").hasAnyRole("USER", "ADMIN")
+                                    .requestMatchers("/api/pizzas/**", "/api/ingredients/**").hasRole("ADMIN")
+                                    .anyRequest().authenticated();
+                        }
                 );
 
         http.authenticationProvider(authenticationProvider());
