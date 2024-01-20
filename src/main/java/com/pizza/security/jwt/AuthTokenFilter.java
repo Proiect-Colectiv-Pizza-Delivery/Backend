@@ -41,6 +41,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        if(request.getServletPath().contains("/swagger") || request.getServletPath().contains("/v3/api-docs")){
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String deviceHeader = parseDeviceId(request);
         if (deviceHeader == null) {
             handleMissingDeviceId(response);
