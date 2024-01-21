@@ -15,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
@@ -34,6 +37,16 @@ public class AuthController {
         try {
             return ResponseEntity.ok(userDetailsManager.loginUser(loginRequest,deviceId));
         } catch (UsernameNotFoundException exception) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/loginGoogle")
+    public ResponseEntity<JwtResponse> loginUserGoogle(@RequestHeader(name="googleHeader") String googleHeader,
+                                                 @RequestHeader(name="Device-id") String deviceId) throws CustomException {
+        try {
+            return ResponseEntity.ok(userDetailsManager.loginUserGoogle(googleHeader,deviceId));
+        } catch (UsernameNotFoundException | GeneralSecurityException | IOException exception ) {
             return ResponseEntity.notFound().build();
         }
     }

@@ -2,6 +2,8 @@ package com.pizza.security;
 
 
 import com.pizza.exception.AlreadyInUseException;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.pizza.exception.CustomException;
 import com.pizza.model.security.requests.LoginRequest;
 import com.pizza.model.security.requests.SignupRequest;
@@ -15,6 +17,7 @@ import com.pizza.security.jwt.JwtUtils;
 import com.pizza.service.security.TokenService;
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
+import org.apache.http.auth.Credentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,9 +31,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -54,6 +60,8 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
 
     @Autowired
     TokenService tokenService;
+
+    GoogleIdTokenVerifier googleIdTokenVerifier;
 
     public void createUser(UserDetails userDetails, String deviceId) {
         User user = new User(userDetails.getUsername(), userDetails.getPassword(),
@@ -153,6 +161,92 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
         user.setPhoneNumber(signUpRequest.getPhoneNumber());
 
         userRepo.save(user);
+    }
+
+    public JwtResponse loginUserGoogle(String googleHeader,String deviceId) throws GeneralSecurityException, IOException, CustomException {
+
+        GoogleIdToken decodedToken = googleIdTokenVerifier.verify(googleHeader);
+        User user=googleTokenToUser(decodedToken);
+
+        if (userRepo.existsByUsername(user.getUsername())) {
+            //don't need to create local user, just login
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), null));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            String username = userDetails.getUsername();
+
+            String encodedDeviceId = jwtUtils.encodeDeviceId(deviceId);
+            changeDeviceIdForUser(encodedDeviceId, username);
+
+            String accessJwtToken = jwtUtils.generateAccessJwtToken(username, deviceId);
+
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList();
+
+            String accessTokenId = jwtUtils.getAccessTokenIdFromJwtToken(accessJwtToken);
+            String refreshJwtToken = jwtUtils.generateRefreshJwtToken(username, deviceId, accessTokenId);
+
+            return new JwtResponse(accessJwtToken, refreshJwtToken,
+                    userDetails.getUsername(), userDetails.getEmail(), userDetails.getFirstName(),
+                    userDetails.getLastName(), userDetails.getPhoneNumber(), roles);
+        }
+        else{
+            //need to create local user + login
+
+            Set<Role> roles = new HashSet<>();
+            Role roleStart = roleRepo.findByName(ERole.ROLE_ADMIN)
+                    .orElseThrow(() -> new CustomException("Error: Role is not found."));
+            roles.add(roleStart);
+
+            List<GrantedAuthority> authorities = roles.stream()
+                    .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                    .collect(Collectors.toList());
+
+            UserDetailsImpl userDetails = new UserDetailsImpl(user, authorities);
+
+            String encodedDeviceId = jwtUtils.encodeDeviceId(deviceId);
+            this.createUser(userDetails, encodedDeviceId);
+
+            String username = user.getUsername();
+            User dbUser = userRepo.findByUsername(username)
+                    .orElseThrow(() -> new CustomException("User Not Found with username: " + username));
+
+            dbUser.setEmail(user.getEmail());
+            dbUser.setFirstName(user.getFirstName());
+            dbUser.setLastName(user.getLastName());
+            dbUser.setPhoneNumber(user.getPhoneNumber());
+
+            userRepo.save(user);
+
+            String accessJwtToken = jwtUtils.generateAccessJwtToken(username, deviceId);
+
+            String accessTokenId = jwtUtils.getAccessTokenIdFromJwtToken(accessJwtToken);
+            String refreshJwtToken = jwtUtils.generateRefreshJwtToken(username, deviceId, accessTokenId);
+
+            return new JwtResponse(accessJwtToken, refreshJwtToken,
+                    userDetails.getUsername(), userDetails.getEmail(), userDetails.getFirstName(),
+                    userDetails.getLastName(), userDetails.getPhoneNumber(), roles.stream().map(Role::toString).toList());
+
+        }
+    }
+
+    private User googleTokenToUser(GoogleIdToken decodedToken) {
+        User user = null;
+        if (decodedToken != null) {
+            GoogleIdToken.Payload payload = decodedToken.getPayload();
+            user = new User();
+            String email = payload.getEmail();
+            user.setEmail(email);
+            user.setFirstName((String) payload.get("name"));
+            user.setLastName((String) payload.get("family_name"));
+            user.setUsername(payload.getSubject());
+            user.setPhoneNumber(UUID.randomUUID().toString());
+        }
+        return user;
     }
 
     @Override
