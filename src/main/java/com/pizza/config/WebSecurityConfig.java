@@ -87,7 +87,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .authorizeHttpRequests(auth -> {
                             auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                             auth.requestMatchers(AUTH_WHITELIST).permitAll()
-                                    .requestMatchers(HttpMethod.GET, "/api/pizzas", "/api/pizzas/*", "/api/pizzas/*/ingredients", "/api/pizzas/ingredients", "/api/ingredients/*","/api/ingredients").hasAnyRole("USER", "ADMIN")                                    .requestMatchers("/api/pizzas/**", "/api/ingredients/**").hasRole("ADMIN")
+                                    .requestMatchers(HttpMethod.GET, "/api/pizzas", "/api/pizzas/*", "/api/pizzas/*/ingredients", "/api/pizzas/ingredients", "/api/ingredients/*","/api/ingredients").hasAnyRole("USER", "ADMIN")
+                                    .requestMatchers("/api/pizzas/**", "/api/ingredients/**").hasRole("ADMIN")
                                     .anyRequest().authenticated();
                         }
                 );
